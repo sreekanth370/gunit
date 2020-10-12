@@ -39,12 +39,12 @@ func TestRunnerFixtureWithSetupAndTeardown(t *testing.T) {
 }
 func assertSetupTeardownInvocationsInCorrectOrder(t *testing.T) {
 	expectedInvocations := []string{
-		"Setup", "Test3", "Teardown",
-		"Setup", "Test1", "Teardown",
+		"Setup1", "Setup2", "Test3", "Teardown1", "Teardown2",
+		"Setup1", "Setup2", "Test1", "Teardown1", "Teardown2",
 		// Test2 and Test4 are always skipped
 	}
 	if testing.Short() {
-		expectedInvocations = expectedInvocations[3:]
+		expectedInvocations = expectedInvocations[5:]
 	}
 	assertions.New(t).AssertDeepEqual(expectedInvocations, invocations_A)
 }
@@ -53,8 +53,10 @@ var invocations_A []string
 
 type FixtureWithSetupTeardown struct{ *Fixture }
 
-func (this *FixtureWithSetupTeardown) Setup()         { invocations_A = append(invocations_A, "Setup") }
-func (this *FixtureWithSetupTeardown) Teardown()      { invocations_A = append(invocations_A, "Teardown") }
+func (this *FixtureWithSetupTeardown) Setup1()        { invocations_A = append(invocations_A, "Setup1") }
+func (this *FixtureWithSetupTeardown) Setup2()        { invocations_A = append(invocations_A, "Setup2") }
+func (this *FixtureWithSetupTeardown) Teardown1()     { invocations_A = append(invocations_A, "Teardown1") }
+func (this *FixtureWithSetupTeardown) Teardown2()     { invocations_A = append(invocations_A, "Teardown2") }
 func (this *FixtureWithSetupTeardown) Test1()         { invocations_A = append(invocations_A, "Test1") }
 func (this *FixtureWithSetupTeardown) SkipTest2()     { invocations_A = append(invocations_A, "Test2") }
 func (this *FixtureWithSetupTeardown) LongTest3()     { invocations_A = append(invocations_A, "Test3") }

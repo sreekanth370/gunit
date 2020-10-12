@@ -14,8 +14,8 @@ type testCase struct {
 	long        bool
 	parallel    bool
 
-	setup            int
-	teardown         int
+	setups           []int
+	teardowns        []int
 	innerFixture     *Fixture
 	outerFixtureType reflect.Type
 	outerFixture     reflect.Value
@@ -33,9 +33,9 @@ func newTestCase(methodIndex int, method fixtureMethodInfo, config configuration
 	}
 }
 
-func (this *testCase) Prepare(setup, teardown int, outerFixtureType reflect.Type) {
-	this.setup = setup
-	this.teardown = teardown
+func (this *testCase) Prepare(setups, teardowns []int, outerFixtureType reflect.Type) {
+	this.setups = setups
+	this.teardowns = teardowns
 	this.outerFixtureType = outerFixtureType
 }
 
@@ -75,14 +75,14 @@ func (this *testCase) initializeFixture(innerT *testing.T) {
 }
 
 func (this *testCase) runWithSetupAndTeardown() {
-	this.runSetup()
-	defer this.runTeardown()
+	this.runSetups()
+	defer this.runTeardowns()
 	this.runTest()
 }
 
-func (this *testCase) runSetup() {
-	if this.setup >= 0 {
-		this.outerFixture.Method(this.setup).Call(nil)
+func (this *testCase) runSetups() {
+	for _, setup := range this.setups {
+		this.outerFixture.Method(setup).Call(nil)
 	}
 }
 
@@ -90,8 +90,8 @@ func (this *testCase) runTest() {
 	this.outerFixture.Method(this.methodIndex).Call(nil)
 }
 
-func (this *testCase) runTeardown() {
-	if this.teardown >= 0 {
-		this.outerFixture.Method(this.teardown).Call(nil)
+func (this *testCase) runTeardowns() {
+	for _, teardown := range this.teardowns {
+		this.outerFixture.Method(teardown).Call(nil)
 	}
 }
