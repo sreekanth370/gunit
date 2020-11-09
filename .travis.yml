@@ -5,9 +5,8 @@ arch:
  - amd64
  - ppc64le
 go:
-  - 1.13
-  - 1.14
-  - 1.15
+  - 1.6
+  - 1.5
 
 env:
   - GO111MODULE=on
